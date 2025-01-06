@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography, Alert } from "@mui/material";
-// import { signUp } from "../services/api";
+import { signUp } from "../Services/api";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
