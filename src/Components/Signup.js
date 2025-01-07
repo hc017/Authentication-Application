@@ -17,13 +17,22 @@ const Signup = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+  
+    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+      setError("Invalid email format!");
+      return;
+    }
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters long!");
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match!");
       return;
     }
+  
     try {
       const response = await signUp(formData);
       setSuccess(response.message);
@@ -32,6 +41,7 @@ const Signup = () => {
       setError(err.errorMessage || "Signup failed!");
     }
   };
+  
 
   return (
     <Box sx={{ maxWidth: 400, mx: "auto", mt: 5 }}>

@@ -1,0 +1,12 @@
+{
+    "auth": {
+      "signup": {
+        "message": "Signup successful!"
+      },
+      "login": {
+        "token": "mock-token",
+        "username": "TestUser"
+      }
+    }
+  }
+  
