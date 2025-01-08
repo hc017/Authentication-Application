@@ -1,101 +1,121 @@
-import React, { useState } from "react";
-import { TextField, Button, Box, Typography, Alert } from "@mui/material";
-import { signUp } from "../Services/api";
+import React, { useState } from 'react';
+import { TextField, Button, Box } from '@mui/material';
+import apiClient from '../Services/api';
 
-const Signup = () => {
+// Signup component for user registration
+function Signup() {
+  // State to manage form data, error messages, and loading status
   const [formData, setFormData] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    inviteCode: "",
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    inviteCode: '',
   });
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+  const [error, setError] = useState(''); // Holds error messages for display
+  const [loading, setLoading] = useState(false); // Indicates if the form submission is in progress
 
+  // Updates form data state as user inputs values
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+  // Handles form submission logic
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      setError("Invalid email format!");
-      return;
-    }
-    if (formData.password.length < 8) {
-      setError("Password must be at least 8 characters long!");
-      return;
-    }
+
+    // Validate if passwords match before sending data to the server
     if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match!");
+      setError('Passwords do not match!');
       return;
     }
-  
+
     try {
-      const response = await signUp(formData);
-      setSuccess(response.message);
-      setError("");
+      setLoading(true); // Set loading state to true during API call
+      // Send form data to the signup API endpoint
+      const response = await apiClient.post('/signup', formData);
+      alert(response.data.message || 'Signup successful'); // Notify the user of success
+
+      // Reset form fields after successful signup
+      setFormData({
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        inviteCode: '',
+      });
     } catch (err) {
-      setError(err.errorMessage || "Signup failed!");
+      // Capture and display error message from API response
+      setError(err.response?.data?.errorMessage || 'An error occurred');
+    } finally {
+      setLoading(false); // Reset loading state
     }
   };
-  
 
   return (
-    <Box sx={{ maxWidth: 400, mx: "auto", mt: 5 }}>
-      <Typography variant="h4" gutterBottom>Sign Up</Typography>
-      {error && <Alert severity="error">{error}</Alert>}
-      {success && <Alert severity="success">{success}</Alert>}
-      <form onSubmit={handleSubmit}>
-        <TextField
-          label="Name"
-          name="username"
-          fullWidth
-          margin="normal"
-          value={formData.username}
-          onChange={handleChange}
-        />
-        <TextField
-          label="Email"
-          name="email"
-          type="email"
-          fullWidth
-          margin="normal"
-          value={formData.email}
-          onChange={handleChange}
-        />
-        <TextField
-          label="Password"
-          name="password"
-          type="password"
-          fullWidth
-          margin="normal"
-          value={formData.password}
-          onChange={handleChange}
-        />
-        <TextField
-          label="Confirm Password"
-          name="confirmPassword"
-          type="password"
-          fullWidth
-          margin="normal"
-          value={formData.confirmPassword}
-          onChange={handleChange}
-        />
-        <TextField
-          label="Invite Code"
-          name="inviteCode"
-          fullWidth
-          margin="normal"
-          value={formData.inviteCode}
-          onChange={handleChange}
-        />
-        <Button variant="contained" color="primary" type="submit" fullWidth>Sign Up</Button>
-      </form>
+    // Render a form for user signup
+    <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: 'auto', mt: 5 }}>
+      {/* Username input field */}
+      <TextField
+        label="Username"
+        name="username"
+        value={formData.username}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+        required
+      />
+      {/* Email input field */}
+      <TextField
+        label="Email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+        required
+      />
+      {/* Password input field */}
+      <TextField
+        label="Password"
+        name="password"
+        type="password"
+        value={formData.password}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+        required
+      />
+      {/* Confirm Password input field */}
+      <TextField
+        label="Confirm Password"
+        name="confirmPassword"
+        type="password"
+        value={formData.confirmPassword}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+        required
+      />
+      {/* Invite Code input field */}
+      <TextField
+        label="Invite Code"
+        name="inviteCode"
+        value={formData.inviteCode}
+        onChange={handleChange}
+        fullWidth
+        margin="normal"
+        required
+      />
+      {/* Error message display */}
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {/* Submit button */}
+      <Button type="submit" variant="contained" fullWidth disabled={loading}>
+        {loading ? 'Signing up...' : 'Sign Up'}
+      </Button>
     </Box>
   );
-};
+}
 
 export default Signup;
