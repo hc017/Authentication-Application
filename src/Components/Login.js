@@ -1,41 +1,52 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import apiClient from '../Services/api';
+import AlertMessage from './AlertMessage'; // Import AlertMessage component for user notifications
 
 // Login component for user authentication
 function Login() {
-  // State to manage form data, error messages, and loading status
+  // State to manage form data (email and password)
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [error, setError] = useState(''); // Holds error messages for display
-  const [loading, setLoading] = useState(false); // Indicates if the form submission is in progress
 
-  // Updates form data state as user inputs values
+  // State to manage alert messages (open status, type, and message content)
+  const [alert, setAlert] = useState({ open: false, type: '', message: '' });
+
+  // State to manage loading status during form submission
+  const [loading, setLoading] = useState(false);
+
+  // Handle changes in input fields and update formData state
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData({ ...formData, [name]: value }); // Update the corresponding field in formData
   };
 
-  // Handles form submission logic
+  // Handle form submission logic
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission behavior
     try {
-      setLoading(true); // Set loading state to true during API call
-      // Send form data to the login API endpoint
-      const response = await apiClient.post('/login', formData);
-      alert(`Welcome ${response.data.username}`); // Display a welcome message on success
+      setLoading(true); // Set loading state to true while processing
+      const response = await apiClient.post('/login', formData); // Send login request to the API
+
+      // Display success alert on successful login
+      setAlert({ open: true, type: 'success', message: `Welcome ${response.data.username}` });
 
       // Reset form fields after successful login
       setFormData({ email: '', password: '' });
     } catch (err) {
-      // Capture and display error message from API response
-      setError(err.response?.data?.errorMessage || 'Invalid credentials');
+      // Display error alert on login failure
+      setAlert({ open: true, type: 'error', message: err.response?.data?.errorMessage || 'Invalid credentials' });
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false); // Reset loading state after processing
     }
   };
 
+  // Handle closing of the alert message
+  const handleAlertClose = () => {
+    setAlert({ ...alert, open: false });
+  };
+
   return (
-    // Render a form for user login
+    // Render the login form with Material-UI components
     <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: 'auto', mt: 5 }}>
       {/* Email input field */}
       <TextField
@@ -58,12 +69,17 @@ function Login() {
         margin="normal"
         required
       />
-      {/* Error message display */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
       {/* Submit button */}
       <Button type="submit" variant="contained" fullWidth disabled={loading}>
         {loading ? 'Logging in...' : 'Login'}
       </Button>
+      {/* AlertMessage component to display success or error notifications */}
+      <AlertMessage
+        open={alert.open}
+        type={alert.type}
+        message={alert.message}
+        onClose={handleAlertClose}
+      />
     </Box>
   );
 }

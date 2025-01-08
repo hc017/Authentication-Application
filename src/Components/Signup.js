@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import apiClient from '../Services/api';
+import AlertMessage from './AlertMessage'; // Import AlertMessage component for user notifications
 
 // Signup component for user registration
 function Signup() {
-  // State to manage form data, error messages, and loading status
+  // State for managing form data
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -12,32 +13,37 @@ function Signup() {
     confirmPassword: '',
     inviteCode: '',
   });
-  const [error, setError] = useState(''); // Holds error messages for display
-  const [loading, setLoading] = useState(false); // Indicates if the form submission is in progress
 
-  // Updates form data state as user inputs values
+  // State for managing alert messages (open, type, and message content)
+  const [alert, setAlert] = useState({ open: false, type: '', message: '' });
+
+  // State for managing loading status during form submission
+  const [loading, setLoading] = useState(false);
+
+  // Handles input changes and updates formData state dynamically
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Handles form submission logic
+  // Handles form submission logic, including validation and API call
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate if passwords match before sending data to the server
+    // Validate if passwords match
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match!');
+      setAlert({ open: true, type: 'error', message: 'Passwords do not match!' });
       return;
     }
 
     try {
-      setLoading(true); // Set loading state to true during API call
-      // Send form data to the signup API endpoint
-      const response = await apiClient.post('/signup', formData);
-      alert(response.data.message || 'Signup successful'); // Notify the user of success
+      setLoading(true); // Set loading state to true while API call is in progress
 
-      // Reset form fields after successful signup
+      // Send signup data to the API
+      const response = await apiClient.post('/signup', formData);
+
+      // Display success alert and reset form fields
+      setAlert({ open: true, type: 'success', message: response.data.message || 'Signup successful' });
       setFormData({
         username: '',
         email: '',
@@ -46,15 +52,20 @@ function Signup() {
         inviteCode: '',
       });
     } catch (err) {
-      // Capture and display error message from API response
-      setError(err.response?.data?.errorMessage || 'An error occurred');
+      // Display error alert with API error message or generic fallback
+      setAlert({ open: true, type: 'error', message: err.response?.data?.errorMessage || 'An error occurred' });
     } finally {
-      setLoading(false); // Reset loading state
+      setLoading(false); // Reset loading state after API call
     }
   };
 
+  // Handles closing the alert message
+  const handleAlertClose = () => {
+    setAlert({ ...alert, open: false });
+  };
+
   return (
-    // Render a form for user signup
+    // Render signup form with MUI components for styling and functionality
     <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: 'auto', mt: 5 }}>
       {/* Username input field */}
       <TextField
@@ -108,12 +119,17 @@ function Signup() {
         margin="normal"
         required
       />
-      {/* Error message display */}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
       {/* Submit button */}
       <Button type="submit" variant="contained" fullWidth disabled={loading}>
         {loading ? 'Signing up...' : 'Sign Up'}
       </Button>
+      {/* AlertMessage component for displaying success or error messages */}
+      <AlertMessage
+        open={alert.open}
+        type={alert.type}
+        message={alert.message}
+        onClose={handleAlertClose}
+      />
     </Box>
   );
 }
