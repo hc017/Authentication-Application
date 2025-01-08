@@ -1,70 +1,91 @@
-# Getting Started with Create React App
+React.js User Authentication Project
+This is a simple React.js project for user authentication, featuring signup and login functionalities. The project integrates with an API provided by Biztel.ai, and it was developed as part of the React.js internship assignment.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Project Overview
+This project is designed to provide user authentication functionalities, where users can sign up and log in using their credentials. The project leverages React.js for the frontend and communicates with the backend API for user registration and authentication. Material-UI (MUI) is used for designing the user interface.
 
-## Available Scripts
+Technologies Used
+Frontend Framework: React.js
+UI Library: Material-UI (MUI)
+HTTP Client: Axios
+Backend API: OpenAPI v3 specification (provided by Biztel.ai)
+Features
+Signup: Users can register by providing their username, email, password, confirm password, and invite code. The form is validated to ensure proper user input before making an API call.
+Login: Users can authenticate by logging in using their email and password.
+API Integration: Integrated with the backend APIs for both signup and login functionalities.
+Error Handling: Displays error messages to users in case of invalid input or failed API requests.
+How to Set Up and Run Locally
+1. Clone the Repository
+First, clone the repository to your local machine.
 
-In the project directory, you can run:
+bash
+Copy code
+git clone https://github.com/your-username/react-authentication-project.git
+2. Install Dependencies
+Navigate to the project directory and install the required dependencies.
 
-### `npm start`
+bash
+Copy code
+cd react-authentication-project
+npm install
+3. Set Up Environment Variables
+The project uses Axios to make API requests. The base API URL is already set in the api.js file. However, if you'd like to set up a custom API URL or any other configuration, create a .env file in the root directory with the following structure:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+bash
+Copy code
+REACT_APP_API_URL=http://bffapi.biztel.ai:8080/api/auth
+4. Run the Application
+To run the application locally, use the following command:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+bash
+Copy code
+npm start
+This will start the development server, and you can access the app at http://localhost:3000 in your browser.
 
-### `npm test`
+5. Testing the Application
+Once the application is running, you can test the login and signup functionality. Please note that the signup feature requires a valid invite code, which is not provided with the current project setup. You can test the login functionality with your credentials if the backend allows it.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+API Integration
+Signup API
+Endpoint: /signup
+Method: POST
+Request Body:
+json
+Copy code
+{
+  "username": "string",
+  "email": "string",
+  "password": "string",
+  "confirmPassword": "string",
+  "inviteCode": "string"
+}
+Error Handling:
+If the API returns an error, the frontend will display an error message to the user. For example, if the invite code is invalid, the user will receive the message:
+"Invalid invite code".
+Login API
+Endpoint: /login
+Method: POST
+Request Body:
+json
+Copy code
+{
+  "email": "string",
+  "password": "string"
+}
+Error Handling:
+If the credentials are incorrect, the error message will be displayed:
+"Invalid credentials". If any other error occurs, a generic error message is shown.
+Error Handling in Frontend
+The application uses state management to handle alerts and error messages. If any form input is invalid or if an API request fails, a corresponding error message is shown to the user. The error handling approach ensures that users receive immediate feedback and can take corrective actions.
 
-### `npm run build`
+The AlertMessage component is used to display success and error messages in the UI. It takes in parameters such as the alert type (error, success) and the message content. This ensures that all notifications are centralized and reusable throughout the application.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Challenges
+Invite Code Dependency: The API requires an invite code to complete the signup process, but no valid invite code was provided, preventing full testing of the signup functionality.
+Testing Limitations: Since the invite code is essential, the signup functionality couldn't be fully tested, but the rest of the features (like form validation and login) have been implemented and tested successfully.
+Future Enhancements
+Add proper handling and validation for various API error codes.
+Implement token-based authentication (JWT) to manage user sessions.
+Add unit tests for API calls and form validation logic.
+License
+This project is licensed under the MIT License.
