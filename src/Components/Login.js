@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box } from '@mui/material';
+import { TextField, Button, Typography, Box } from '@mui/material';
 import apiClient from '../Services/api';
 import AlertMessage from './AlertMessage'; // Import AlertMessage component for user notifications
 
@@ -49,6 +49,7 @@ function Login() {
     // Render the login form with Material-UI components
     <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: 'auto', mt: 5 }}>
       {/* Email input field */}
+      <Typography variant="h4" gutterBottom>Login</Typography>
       <TextField
         label="Email"
         name="email"

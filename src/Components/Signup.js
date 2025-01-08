@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box } from '@mui/material';
+import { TextField, Button, Typography, Box } from '@mui/material';
 import apiClient from '../Services/api';
 import AlertMessage from './AlertMessage'; // Import AlertMessage component for user notifications
 
@@ -68,6 +68,7 @@ function Signup() {
     // Render signup form with MUI components for styling and functionality
     <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 400, mx: 'auto', mt: 5 }}>
       {/* Username input field */}
+      <Typography variant="h4" gutterBottom>Sign Up</Typography>
       <TextField
         label="Username"
         name="username"
